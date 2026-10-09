@@ -1,22 +1,21 @@
-# Enterprise Security Operations Center (SOC) CLI Dashboard
+# 🛡️ SOC CLI Real-Time Dashboard & Threat Intel Engine
 
-A modular, enterprise-grade Security Operations Center (SOC) command-line interface built in Python for automated threat detection, port scanning, log analysis, and security auditing.
+An automated, terminal-based Security Operations Center (SOC) dashboard built in Python for mobile Termux and Linux environments. Features real-time log monitoring, live UI rendering with `rich`, threat intelligence IP scoring, persistent SQLite database logging, and automated test suites.
 
-## 🚀 Features
+## 🚀 Key Features
+- **Real-Time Terminal UI**: Displays active security telemetry powered by `rich`.
+- **Threat Intelligence Integration**: Automatic IP reputation checks with simulated fallbacks and REST API readiness (AbuseIPDB).
+- **SQLite Data Persistence**: Automatically logs incident telemetry to a persistent SQLite relational database (`soc_incidents.db`).
+- **Automated Testing**: Unit test suite implemented with `pytest` covering API logic and database interactions.
+- **Mobile-First SOC Engineering**: Engineered and optimized for execution within Termux on Android devices.
 
-- **Proactive Port Scanner**: Multi-threaded socket-based network reconnaissance tool.
-- **Enterprise SIEM Engine**: SQLite-backed threshold correlation engine designed to catch brute-force attacks and high-risk anomalies.
-- **File Integrity Monitor (FIM)**: Tracks system files for unauthorized modifications.
-- **Cloud & IAM Auditors**: Validates cloud API tokens, JWTs, and privilege access controls.
-- **DFIR Forensic Artifact Parser**: Analyzes forensic logs for malicious indicators.
+## 📦 Installation & Setup
 
-## 🛠 Tech Stack
-
-- **Language**: Python 3.x
-- **Database**: SQLite3
-- **Environment**: Termux / Linux Virtual Machines
-- **Version Control**: Git & GitHub CLI (`gh`)
-
-## 📦 Installation & Usage
-
-1. **Clone the repository:**
+1. **Clone the Repository**:
+   ```bash
+   git clone [https://github.com/iankapida/soc-cli-dashboard.git](https://github.com/iankapida/soc-cli-dashboard.git)
+   cd soc-cli-dashboard
+pip install rich requests pytest
+python soc_database.py
+python dashboard.py
+pytest test_soc.py
