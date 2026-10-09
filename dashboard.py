@@ -1,61 +1,55 @@
 import time
 import random
-from rich.console import Console
-from rich.table import Table
 from rich.live import Live
+from rich.table import Table
 from rich.panel import Panel
 from rich.layout import Layout
+from threat_intel import check_ip_reputation
 
-console = Console()
-
-# Simulated IP reputation / threshold logic
-FAILED_THRESHOLD = 3
-ip_fail_counts = {}
-
-def generate_mock_log():
-    sample_ips = ["192.168.1.50", "10.0.0.12", "185.220.101.5", "192.168.1.105"]
-    actions = ["LOGIN_SUCCESS", "FAILED_LOGIN", "FILE_DOWNLOAD", "SUDO_EXEC"]
-    
-    ip = random.choice(sample_ips)
+def generate_log_entry():
+    ips = ["192.168.1.105", "185.220.101.5", "10.0.0.15", "172.16.0.4"]
+    actions = ["LOGIN_SUCCESS", "LOGIN_FAILED", "FILE_DOWNLOAD", "PORT_SCAN"]
+    ip = random.choice(ips)
     action = random.choice(actions)
-    timestamp = time.strftime("%H:%M:%S")
     
-    # Anomaly detection check
-    status = "NORMAL"
-    if action == "FAILED_LOGIN":
-        ip_fail_counts[ip] = ip_fail_counts.get(ip, 0) + 1
-        if ip_fail_counts[ip] >= FAILED_THRESHOLD:
-            status = "ANOMALY (Brute Force Detected)"
+    # Enrich with threat intelligence
+    intel = check_ip_reputation(ip)
     
-    return {"time": timestamp, "ip": ip, "action": action, "status": status}
+    return {
+        "timestamp": time.strftime("%H:%M:%S"),
+        "ip": ip,
+        "action": action,
+        "abuse_score": intel["abuse_score"],
+        "status": intel["status"]
+    }
 
-def generate_table(logs):
-    table = Table(title="SOC Real-Time Log Monitor", expand=True)
-    table.add_column("Timestamp", style="cyan", no_wrap=True)
-    table.add_column("Source IP", style="magenta")
-    table.add_column("Action", style="green")
-    table.add_column("Threat Status", style="bold yellow")
+def generate_table(log_history):
+    table = Table(title="Live SOC Incident Telemetry", expand=True)
+    table.add_column("Timestamp", justify="center", style="cyan")
+    table.add_column("Source IP", justify="center", style="magenta")
+    table.add_column("Action", justify="left", style="yellow")
+    table.add_column("Abuse Score", justify="center", style="bold red")
+    table.add_column("Status", justify="center")
 
-    for log in logs[-10:]:  # Display last 10 entries
-        status_style = "bold red" if "ANOMALY" in log["status"] else "dim green"
+    for log in log_history[-10:]:
+        status_style = "[bold red]SUSPICIOUS[/bold red]" if log["status"] == "SUSPICIOUS" else "[bold green]CLEAN[/bold green]"
         table.add_row(
-            log["time"],
+            log["timestamp"],
             log["ip"],
             log["action"],
-            f"[{status_style}]{log['status']}[/{status_style}]"
+            str(log["abuse_score"]),
+            status_style
         )
     return table
 
-def main():
-    logs = []
-    console.print("[bold green]Starting SOC CLI Dashboard...[/bold green]")
-    time.sleep(1)
-    
-    with Live(generate_table(logs), refresh_per_second=2, console=console) as live:
-        for _ in range(20):  # Runs for 20 simulation steps
-            time.sleep(1)
-            logs.append(generate_mock_log())
-            live.update(generate_table(logs))
-
 if __name__ == "__main__":
-    main()
+    log_history = []
+    print("Starting enriched SOC Dashboard (Press CTRL+C to exit)...")
+    try:
+        with Live(generate_table(log_history), refresh_per_second=2) as live:
+            while True:
+                log_history.append(generate_log_entry())
+                live.update(generate_table(log_history))
+                time.sleep(1)
+    except KeyboardInterrupt:
+        print("\nDashboard stopped.")
