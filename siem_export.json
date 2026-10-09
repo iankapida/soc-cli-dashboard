@@ -1,0 +1,16 @@
+[
+    {
+        "timestamp": "2026-09-12 14:10:01",
+        "event_type": "2026-09-12 14:10:01 AUTH_FAIL",
+        "source_ip": "203.0.113.50",
+        "raw_message": "2026-09-12 14:10:01 [AUTH_FAIL] Root login attempt failed from 203.0.113.50",
+        "severity": "MEDIUM"
+    },
+    {
+        "timestamp": "2026-09-12 14:11:00",
+        "event_type": "2026-09-12 14:11:00 ALERT",
+        "source_ip": "198.51.100.22",
+        "raw_message": "2026-09-12 14:11:00 [ALERT] Unauthorized brute-force burst from 198.51.100.22",
+        "severity": "HIGH"
+    }
+]
