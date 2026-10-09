@@ -1,48 +1,47 @@
 import sqlite3
-import datetime
 
-# Step 1: Initialize local SQLite database for persistent SOC event storage
-db_name = "soc_incidents.db"
-print(f"[*] Connecting to local relational database: {db_name}")
+DB_NAME = "soc_incidents.db"
 
-conn = sqlite3.connect(db_name)
-cursor = conn.cursor()
+def init_db():
+    """Initializes the SQLite database and creates the incidents table if it doesn't exist."""
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS incidents (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp TEXT,
+            ip TEXT,
+            action TEXT,
+            abuse_score INTEGER,
+            status TEXT
+        )
+    """)
+    conn.commit()
+    conn.close()
 
-# Step 2: Create a structured security incidents schema
-cursor.execute('''
-    CREATE TABLE IF NOT EXISTS incidents (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        timestamp TEXT,
-        source_ip TEXT,
-        threat_score INTEGER,
-        ttp TEXT,
-        status TEXT
-    )
-''')
-conn.commit()
+def log_incident(timestamp, ip, action, abuse_score, status):
+    """Inserts a security incident record into the database."""
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO incidents (timestamp, ip, action, abuse_score, status)
+        VALUES (?, ?, ?, ?, ?)
+    """, (timestamp, ip, action, abuse_score, status))
+    conn.commit()
+    conn.close()
 
-# Step 3: Insert normalized security telemetry into the database vault
-sample_incidents = [
-    (datetime.datetime.now().isoformat(), "192.168.100.45", 88, "T1110 - Brute Force", "Isolated"),
-    (datetime.datetime.now().isoformat(), "203.0.113.50", 45, "T1078 - Valid Accounts", "Monitoring"),
-    (datetime.datetime.now().isoformat(), "198.51.100.22", 92, "T1210 - Exploitation", "Contained")
-]
+def fetch_recent_incidents(limit=10):
+    """Fetches recent incidents from the database."""
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT timestamp, ip, action, abuse_score, status 
+        FROM incidents ORDER BY id DESC LIMIT ?
+    """, (limit,))
+    rows = cursor.fetchall()
+    conn.close()
+    return rows
 
-print("[*] Committing parsed incident payloads to database vault...")
-cursor.executemany('''
-    INSERT INTO incidents (timestamp, source_ip, threat_score, ttp, status)
-    VALUES (?, ?, ?, ?, ?)
-''', sample_incidents)
-conn.commit()
-
-# Step 4: Perform a simulated Threat Hunting SQL Query
-print("\n[*] Executing Threat Hunt Query: Selecting high-severity incidents (Score >= 80)...")
-cursor.execute("SELECT source_ip, threat_score, ttp, status FROM incidents WHERE threat_score >= 80")
-high_severity_records = cursor.fetchall()
-
-for row in high_severity_records:
-    print(f"    [!] Target IP: {row[0]} | Score: {row[1]}/100 | TTP: {row[2]} | Status: {row[3]}")
-
-# Close database connection cleanly
-conn.close()
-print(f"\n[+] Database transaction complete. {len(sample_incidents)} records secured in local vault.")
+if __name__ == "__main__":
+    init_db()
+    print("Database initialized successfully.")
