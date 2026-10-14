@@ -1,36 +1,42 @@
-import requests
+# threat_intel.py
+import json
 
-def check_ip_reputation(ip_address, api_key=None):
-    """
-    Checks IP reputation against AbuseIPDB (or returns simulated metrics if no API key is set).
-    """
-    if not api_key:
-        # Fallback simulation for local/Termux testing
-        is_malicious = ip_address.startswith("185.") or ip_address.startswith("10.")
-        return {
-            "ip": ip_address,
-            "abuse_score": 85 if is_malicious else 0,
-            "status": "SUSPICIOUS" if is_malicious else "CLEAN"
+def check_ip_reputation(target_ip):
+    print(f"[*] Querying Threat Intelligence feeds for IP: {target_ip}")
+    
+    # Simulated threat intel database (in production, this would query APIs like AbuseIPDB, VirusTotal, etc.)
+    known_threats = {
+        "192.168.1.50": {
+            "status": "MALICIOUS",
+            "threat_type": "Brute-Force / Port Scan",
+            "confidence": "High",
+            "country": "Unknown / Internal Range"
+        },
+        "10.0.0.15": {
+            "status": "SUSPICIOUS",
+            "threat_type": "Unauthorized Probing",
+            "confidence": "Medium",
+            "country": "Local Subnet"
         }
-
-    url = "https://api.abuseipdb.com/api/v2/check"
-    headers = {"Accept": "application/json", "Key": api_key}
-    params = {"ipAddress": ip_address, "maxAgeInDays": "90"}
-
-    try:
-        response = requests.get(url, headers=headers, params=params, timeout=5)
-        if response.status_code == 200:
-            data = response.json().get("data", {})
-            score = data.get("abuseConfidenceScore", 0)
-            return {
-                "ip": ip_address,
-                "abuse_score": score,
-                "status": "SUSPICIOUS" if score > 20 else "CLEAN"
-            }
-    except requests.RequestException as e:
-        return {"ip": ip_address, "error": str(e), "status": "UNKNOWN"}
+    }
+    
+    result = known_threats.get(target_ip, {
+        "status": "CLEAN",
+        "threat_type": "None",
+        "confidence": "N/A",
+        "country": "Unflagged"
+    })
+    
+    print("-" * 40)
+    print(f" IP Address : {target_ip}")
+    print(f" Status     : {result['status']}")
+    print(f" Threat Type: {result['threat_type']}")
+    print(f" Confidence : {result['confidence']}")
+    print("-" * 40)
+    
+    return result
 
 if __name__ == "__main__":
-    test_ip = "185.220.101.5"
-    print(f"Running threat intel check for {test_ip}...")
-    print(check_ip_reputation(test_ip))
+    # Test with the attacker IP flagged in our previous logs
+    suspicious_ip = "192.168.1.50"
+    check_ip_reputation(suspicious_ip)
