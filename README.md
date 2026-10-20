@@ -7,7 +7,7 @@ A lightweight, terminal-based Security Operations Center (SOC) dashboard and log
 - **Authentication Log Parser:** Filters SSH logs for `Failed password` and `Accepted password` events.
 - **Brute-Force Detection:** Automatically flags IP addresses exceeding failure thresholds.
 - **Interactive CLI Menu:** Fast navigation without requiring complex command-line arguments.
-- **Zero Heavy Dependencies:** Runs entirely on native Python 3 modules for maximum portability.
+- **Automated Test Suite:** Built-in validation script (`verify.py`) to confirm script execution integrity.
 
 ## 🚀 Quick Start
 
@@ -16,8 +16,6 @@ A lightweight, terminal-based Security Operations Center (SOC) dashboard and log
 - Git
 
 ### Installation
-
-Clone the repository and enter the directory:
 
 ```bash
 git clone [https://github.com/iankapida/soc-cli-dashboard.git](https://github.com/iankapida/soc-cli-dashboard.git)
