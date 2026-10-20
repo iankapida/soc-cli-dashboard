@@ -7,7 +7,7 @@ def parse_logs(filepath):
     ip_failures = {}
 
     try:
-        with open(filepath, 'r') as file:
+        with open(filepath, 'r', encoding='utf-8', errors='ignore') as file:
             for line in file:
                 if "Accepted password" in line:
                     success_count += 1
@@ -31,9 +31,22 @@ def parse_logs(filepath):
                     print(f"- IP: {ip} | Failed Attempts: {count} (Possible Brute-Force)")
         print("-" * 50)
 
+        return {
+            "total": success_count + fail_count,
+            "success": success_count,
+            "failed": fail_count,
+            "suspicious_ips": {ip: c for ip, c in ip_failures.items() if c >= 3}
+        }
+
     except FileNotFoundError:
-        print(f"Error: File {filepath} not found.")
+        print(f"[X] Error: File '{filepath}' not found.")
         sys.exit(2)
+    except PermissionError:
+        print(f"[X] Error: Permission denied reading '{filepath}'.")
+        sys.exit(3)
+    except Exception as e:
+        print(f"[X] Unexpected Error reading '{filepath}': {e}")
+        sys.exit(1)
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
