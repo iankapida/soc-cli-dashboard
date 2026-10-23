@@ -1,22 +1,16 @@
-# 🛡️ SOC CLI Dashboard
+# SOC CLI Dashboard
 
-A lightweight, terminal-based Security Operations Center (SOC) dashboard and log parsing tool written in Python. Built to help security analysts quickly parse Linux authentication logs, detect brute-force attempts, and perform initial threat triage directly from the command line.
+A lightweight, command-line security operations center (SOC) utility written in Python for parsing authentication logs, detecting brute-force attack patterns, and generating automated incident reports. Built for efficiency, automation, and portability (fully tested and executed in mobile Linux/Termux environments).
 
-## ✨ Features
+## Features
+- **Robust Log Parsing:** Safely processes Linux authentication logs (`auth.log`) while handling file-not-found exceptions and malformed data lines.
+- **Brute-Force Detection:** Flags IP addresses exceeding configurable failure thresholds and sorts them by attack frequency.
+- **Automated Test Suite:** Includes an integrated verification script (`verify.py`) to validate core logic and error handling.
+- **Flexible CLI & Export:** Supports custom log paths, adjustable thresholds via `argparse`, and JSON incident report exporting.
 
-- **Authentication Log Parser:** Filters SSH logs for `Failed password` and `Accepted password` events.
-- **Brute-Force Detection:** Automatically flags IP addresses exceeding failure thresholds.
-- **Interactive CLI Menu:** Fast navigation without requiring complex command-line arguments.
-- **Automated Test Suite:** Built-in validation script (`verify.py`) to confirm script execution integrity.
+## Installation & Setup
 
-## 🚀 Quick Start
-
-### Prerequisites
-- Python 3.x installed
-- Git
-
-### Installation
-
+Clone the repository and navigate into the directory:
 ```bash
 git clone [https://github.com/iankapida/soc-cli-dashboard.git](https://github.com/iankapida/soc-cli-dashboard.git)
 cd soc-cli-dashboard
