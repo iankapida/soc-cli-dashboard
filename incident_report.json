@@ -1,6 +1,17 @@
-[
-    {
-        "ip": "185.220.101.5",
-        "failed_attempts": 3
-    }
-]
+{
+    "timestamp": "2026-10-27T22:48:21.375954",
+    "indicators_of_compromise": {
+        "source_ips": [
+            "192.168.1.50"
+        ],
+        "compromised_accounts": [
+            "root"
+        ],
+        "persistence_mechanisms": []
+    },
+    "generated_alerts": [
+        "[CRITICAL] COMPROMISE ALERT: Successful login for 'root' from IP 192.168.1.50 immediately following a brute-force attack!",
+        "[CONTAINMENT ACTION (SIMULATED)] Executed: iptables -A INPUT -s 192.168.1.50 -j DROP",
+        "[WARNING] Potential Brute-Force Attack detected from IP: 192.168.1.50 (3 failures)"
+    ]
+}
