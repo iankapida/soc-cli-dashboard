@@ -1,0 +1,5 @@
+Oct 27 08:10:15 server sshd[4011]: Accepted publickey for root from 10.0.0.5 port 2222 ssh2
+Oct 27 08:12:01 server sshd[4521]: Failed password for invalid user admin from 192.168.1.50 port 54122 ssh2
+Oct 27 08:12:03 server sshd[4523]: Failed password for invalid user admin from 192.168.1.50 port 54124 ssh2
+Oct 27 08:12:05 server sshd[4525]: Failed password for invalid user admin from 192.168.1.50 port 54126 ssh2
+Oct 27 08:12:06 server sshd[4527]: Accepted password for root from 192.168.1.50 port 54128 ssh2
